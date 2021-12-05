@@ -39,4 +39,4 @@ def part2(d: Data, ans: Answers) -> None:
     ans.part2 = int(coords.imag * coords.real)
 
 
-run([1, 2], day=2, year=2021, submit=True)
+run([1, 2], day=2, year=2021, submit=False)

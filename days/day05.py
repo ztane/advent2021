@@ -48,4 +48,4 @@ def part2(d: Data, ans: Answers) -> None:
     ans.part2 = sum(i > 1 for i in the_map.values())
 
 
-run([1, 2], day=5, year=2021, submit=True)
+run([1, 2], day=5, year=2021, submit=False)

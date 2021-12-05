@@ -67,4 +67,4 @@ def part2(d: Data, ans: Answers) -> None:
     ans.part2 = answer1 * answer2
 
 
-run([1, 2], day=3, year=2021, submit=True)
+run([1, 2], day=3, year=2021, submit=False)
