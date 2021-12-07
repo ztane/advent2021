@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""
+test_data = Input("""
 199
 200
 208
@@ -17,7 +17,7 @@ test_case(1, test_data, 7)
 test_case(2, test_data, 5)
 
 
-def part1(d: Data, ans: Answers) -> None:
+def part1(d: Input, ans: Answers) -> None:
     ans.part1 = sum(
         i < j for (i, j) in zip(
             list(d.extract_ints),
@@ -26,7 +26,7 @@ def part1(d: Data, ans: Answers) -> None:
     )
 
 
-def part2(d: Data, ans: Answers) -> None:
+def part2(d: Input, ans: Answers) -> None:
     l = d.extract_ints
 
     def generate():

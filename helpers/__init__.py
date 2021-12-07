@@ -1,3 +1,5 @@
+import dataclasses
+
 from more_itertools import *
 # noinspection PyUnresolvedReferences
 import inspect
@@ -26,6 +28,7 @@ from typing import *
 from typing import Union, Dict
 
 from aocd import get_data, submit as _aocd_submit
+import numpy as np
 
 
 class reify(object):
@@ -51,7 +54,7 @@ class reify(object):
         return val
 
 
-class Data(str):
+class Input(str):
     def __new__(cls, data: str):
         data = data.strip('\r\n')
         rv = super().__new__(cls, data.strip('\r\n'))
@@ -59,25 +62,25 @@ class Data(str):
         return rv
 
     @reify
-    def lines(self) -> typing.Tuple['Data', ...]:
+    def lines(self) -> typing.Tuple['Input', ...]:
         return tuple(
             filter(bool,
-                   map(Data,
+                   map(Input,
                        map(str.rstrip, self.data.splitlines()))
                    ))
 
     def stripsplit(self, separator: str = None, maxsplit=-1) -> typing.List[
-        'Data']:
+        'Input']:
         """
         Split with the desired separator and also strip whitespace from parts
         """
         return [
-            Data(i.strip())
+            Input(i.strip())
             for i in self.data.split(separator, maxsplit=maxsplit)
         ]
 
-    def split(self, separator: str = None, maxsplit=-1) -> typing.List['Data']:
-        return [Data(i) for i in self.data.split(separator, maxsplit=maxsplit)]
+    def split(self, separator: str = None, maxsplit=-1) -> typing.List['Input']:
+        return [Input(i) for i in self.data.split(separator, maxsplit=maxsplit)]
 
     @reify
     def as_int(self) -> int:
@@ -118,6 +121,10 @@ class Data(str):
         :return: that matrix
         """
         return [[int(i) for i in line.split()] for line in self.lines]
+
+    @reify
+    def numpy_array(self) -> np.ndarray:
+        return np.array(self.integer_matrix)
 
     def parsed_lines(self, fmt: str, verbatim_ws: bool = False) \
             -> typing.Iterator[typing.Tuple]:
@@ -193,7 +200,7 @@ class IntersectionSet(set):
             super().intersection_update(*s)
 
 
-def get_aoc_data(day: int, year=None) -> Data:
+def get_aoc_data(day: int, year=None) -> Input:
     """
     Get the wrapped AOC data for a given day
 
@@ -201,7 +208,7 @@ def get_aoc_data(day: int, year=None) -> Data:
     :return: the data
     """
 
-    rv = Data(get_data(day=day, year=year, block=True))
+    rv = Input(get_data(day=day, year=year, block=True))
     rv.print_excerpt()
     return rv
 
@@ -315,8 +322,8 @@ def draw_display(display_data):
 
 _parser_conversions = {
     'int': (int, r'\s*[-+]?\d+\s*'),
-    'str': (Data, r'.*?'),
-    'chr': (Data, r'.'),
+    'str': (Input, r'.*?'),
+    'chr': (Input, r'.'),
     'hex': (lambda x: int(x, 16), r'\s*[-+]?[0-9a-fA-F]+\s*'),
 }
 
@@ -972,9 +979,10 @@ def test_case(part, input, output):
     _test_cases[part][input] = output
 
 
-class Answers(object):
-    part1: Any
-    part2: Any
+@dataclasses.dataclass()
+class Answers:
+    part1: Optional[Union[str, int]]
+    part2: Optional[Union[str, int]]
 
     def __init__(self, part1: Any = None, part2: Any = None):
         self.part1 = part1
@@ -1015,7 +1023,7 @@ def _test(parts, func):
         for input, output in _test_cases[part].items():
             had_cases = True
             answers = Answers()
-            func(Data(input), answers)
+            func(Input(input), answers)
 
             if (answer := answers.for_part(part)) is None:
                 raise ValueError(f"No answer was given for test case {input!r} "
@@ -1043,7 +1051,7 @@ def run(parts: Union[Iterable[int], int] = (1, 2),
     data = get_aoc_data(day=day, year=year)
 
     def get_data():
-        return Data(str(data))
+        return Input(str(data))
 
     both_parts = caller_globals.get("part1_and_2")
     if both_parts:

@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""
+test_data = Input("""
 00100
 11110
 10110
@@ -19,14 +19,13 @@ test_case(1, test_data, 198)
 test_case(2, test_data, 230)
 
 
-def part1(d: Data, ans: Answers) -> None:
+def part1(d: Input, ans: Answers) -> None:
     cts = Counter()
     for i, in d.parsed_lines('<>'):
         for pos, bit in enumerate(i):
             cts[pos] += 1 if bit == '1' else -1
         l = len(i)
 
-    print(cts)
     gamma_rate = 0
     for i in range(l):
         gamma_rate <<= 1
@@ -55,7 +54,7 @@ def filter_values(numbers, position, most_common):
         return filter_values(filtered, position >> 1, most_common)
 
 
-def part2(d: Data, ans: Answers) -> None:
+def part2(d: Input, ans: Answers) -> None:
     cts = Counter()
     numbers = []
     for i, in d.parsed_lines('<>'):

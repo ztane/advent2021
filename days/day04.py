@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""
+test_data = Input("""
 7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
 22 13 17 11  0
@@ -26,9 +26,9 @@ test_case(1, test_data, 4512)
 test_case(2, test_data, 1924)
 
 
-def part1_and_2(d: Data, ans: Answers) -> None:
-    numbers: Data
-    boards: Tuple[Data]
+def part1_and_2(d: Input, ans: Answers) -> None:
+    numbers: Input
+    boards: Tuple[Input]
     numbers, *boards = d.split('\n\n')
     numbers_as_list = numbers.extract_ints
 

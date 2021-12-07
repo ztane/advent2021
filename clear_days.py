@@ -4,18 +4,18 @@ for i in range(2, 25):
         f.write(f"""\
 from helpers import *
 
-test_data = Data(\"\"\"
+test_data = Input(\"\"\"
 \"\"\")
 
 test_case(1, test_data, ...)
 test_case(2, test_data, ...)
 
 
-def part1(d: Data, ans: Answers) -> None:
+def part1(d: Input, ans: Answers) -> None:
     ...
 
 
-def part2(d: Data, ans: Answers) -> None:
+def part2(d: Input, ans: Answers) -> None:
     ...
 
 

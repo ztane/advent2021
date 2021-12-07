@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""
+test_data = Input("""
 forward 5
 down 5
 forward 8
@@ -18,7 +18,7 @@ directions = {
     'up': -1j
 }
 
-def part1(d: Data, ans: Answers) -> None:
+def part1(d: Input, ans: Answers) -> None:
     coords = 0
 
     for direction, length in d.parsed_lines('<> <int>'):
@@ -27,7 +27,7 @@ def part1(d: Data, ans: Answers) -> None:
     ans.part1 = int(coords.imag * coords.real)
 
 
-def part2(d: Data, ans: Answers) -> None:
+def part2(d: Input, ans: Answers) -> None:
     coords = 0
     aim = 0
 

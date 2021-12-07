@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""
+test_data = Input("""
 0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
@@ -17,7 +17,7 @@ test_case(1, test_data, 5)
 test_case(2, test_data, 12)
 
 
-def part1(d: Data, ans: Answers) -> None:
+def part1(d: Input, ans: Answers) -> None:
     the_map = SparseMap(default=0)
 
     for x1, y1, x2, y2 in d.parsed_lines('<int>,<int> -> <int>,<int>'):
@@ -32,7 +32,7 @@ def part1(d: Data, ans: Answers) -> None:
     ans.part1 = sum(i > 1 for i in the_map.values())
 
 
-def part2(d: Data, ans: Answers) -> None:
+def part2(d: Input, ans: Answers) -> None:
     the_map = SparseMap(default=0)
 
     for x1, y1, x2, y2 in d.parsed_lines('<int>,<int> -> <int>,<int>'):

@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Data("""\
+test_data = Input("""\
 5764801
 17807724
 """)
@@ -15,7 +15,7 @@ def transform(subject, loop_number, *, pow=builtin_pow):
     return pow(subject, loop_number, 20201227)
 
 
-def part1(d: Data, ans: Answers):
+def part1(d: Input, ans: Answers):
     card_public_key, door_public_key = d.extract_ints
 
     # slower routine, no need to do modpows for recovering
