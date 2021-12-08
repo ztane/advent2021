@@ -1,6 +1,5 @@
 import dataclasses
 
-from more_itertools import *
 # noinspection PyUnresolvedReferences
 import inspect
 import operator as op
@@ -177,8 +176,10 @@ class Input(str):
 class IntersectionSet(set):
     """
     A set whose intersection_update counts the intersection of
-    *all* times the intersection is called
+    *all* times the intersection is called. I.e. an uninitialized
+    set is considered to contain all possible elements.
     """
+
     def __init__(self, iterable=None):
         self._is_set = False
         if iterable:
@@ -187,7 +188,7 @@ class IntersectionSet(set):
         else:
             super().__init__()
 
-    def update(self, iterable):
+    def update(self, iterable) -> None:
         self._is_set = True
         super().update(iterable)
 
@@ -384,7 +385,7 @@ class Parser:
 
         self.regex = re.compile(regex)
 
-    def __call__(self, string):
+    def __call__(self, string: str) -> 'Parser':
         """
         Match the given string against the pattern, and set results
         :param string: the string
@@ -415,17 +416,17 @@ class Parser:
             return convfunc(val)
         return None
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.matched
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         if not self.matched:
             raise ValueError(
                 'The pattern didn\'t match {}'.format(self.last_val))
 
         return iter(self.items)
 
-    def __len__(self):
+    def __len__(self) -> int:
         if not self.matched:
             raise ValueError('The pattern didn\'t match')
 
@@ -489,15 +490,17 @@ def neighbourhood_8_counts(x: int, y: int,
     return counts
 
 
-def a_star_solve(origin,
-                 *,
-                 target=None,
-                 max_distance=None,
-                 neighbours,
-                 heuristic=None,
-                 is_target=None,
-                 find_all=False,
-                 hashable=lambda n: n):
+def a_star_solve(
+        origin: Any,
+        *,
+        target: Optional[Any] = None,
+        max_distance: Optional[Number] = None,
+        neighbours: Callable[[Any], Tuple[Number, Any]],
+        heuristic: Optional[Callable[[Any, Any], Number]] = None,
+        is_target: Optional[Callable[[Any], bool]] = None,
+        find_all: bool = False,
+        hashable: Callable[[Any], Hashable] = lambda n: n
+):
     if max_distance is None:
         max_distance = 2 ** 32
 
@@ -543,7 +546,6 @@ def a_star_solve(origin,
 
                 cnt += 1
 
-    print(cnt, 'iterations')
     if find_all:
         return all_routes
     return len(visited)
@@ -799,13 +801,13 @@ class SparseMap(dict):
         self.rows = IterableInt(y + 1)
         self.columns = IterableInt(max_x + 1)
 
-    def add_row(self, row):
+    def add_row(self, row) -> None:
         new_y = self.rows
         for x, cell in enumerate(row):
             self[x, new_y] = cell
         self.rows += 1
 
-    def is_inside(self, x, y):
+    def is_inside(self, x, y) -> bool:
         return 0 <= x < self.columns and 0 <= y < self.rows
 
     def __missing__(self, key):
@@ -885,7 +887,7 @@ def is_scalar(i: Any) -> bool:
     return not (isinstance(i, Iterable) and not isinstance(i, (str, bytes)))
 
 
-def scalar(i: Iterable, nested=False):
+def scalar(i: Iterable, nested: bool = False):
     """
     Returns the *one* element in the iterable, or throws ValueError
     :param i: the iterable
@@ -920,7 +922,12 @@ def coords(i: Union[complex, Iterable]) -> str:
         return f'{int(x)},{int(y)}'
 
 
-def interval(a=None, b=None, c=None, /) -> range:
+def interval(
+        a: int | None = None,
+        b: int | None = None,
+        c: int | None = None,
+        /
+) -> range:
     """
     It is like range, but... inclusive.
     """
@@ -1136,7 +1143,8 @@ class cdir:
         return getattr(cls, direction.upper()) * length
 
     @classmethod
-    def rotate_degrees(cls, vector: complex, direction: str, number: int = 90) -> complex:
+    def rotate_degrees(cls, vector: complex, direction: str,
+                       number: int = 90) -> complex:
         direction = direction.upper()[0]
 
         if direction == 'L':
@@ -1193,3 +1201,27 @@ class ToggleSet(set):
 
     def copy(self) -> 'ToggleSet':
         return ToggleSet(self)
+
+
+def charsort(s: str) -> str:
+    """
+    Return the string with its characters sorted
+    """
+    return ''.join(sorted(s))
+
+
+def make_translator(original: Iterable[str], target: Iterable[str]) \
+        -> Callable[[str], str]:
+    """
+    Returns a function that will translate the characters in the original
+    sequence to the corresponding characters in the destination sequence.
+    Each argument must be iterable of *characters* of equal length (i.e.
+    strings of same length, or lists of strings of length 1...)
+    """
+
+    table = str.maketrans(''.join(original), ''.join(target))
+
+    def translator(s: str) -> str:
+        return s.translate(table)
+
+    return translator
