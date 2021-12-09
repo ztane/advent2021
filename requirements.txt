@@ -1,4 +1,4 @@
-advent-of-code-data
+advent-of-code-data~=1.1.1
 beautifulsoup4
 certifi
 chardet
@@ -6,7 +6,7 @@ cycler
 idna
 kiwisolver
 matplotlib
-numpy
+numpy~=1.21.4
 pyparsing
 python-dateutil
 pytz
@@ -15,3 +15,4 @@ six
 termcolor
 urllib3
 more-itertools
+scipy

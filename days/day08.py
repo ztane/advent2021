@@ -87,4 +87,4 @@ def part2(d: Input, ans: Answers) -> None:
         ans.part2 += int(result_digits)
 
 
-run([1, 2], day=8, year=2021, submit=True)
+run([1, 2], day=8, year=2021)

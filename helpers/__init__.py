@@ -121,6 +121,11 @@ class Input(str):
         """
         return [[int(i) for i in line.split()] for line in self.lines]
 
+    def numpy_char_array(self, conversion: Callable[[str], int] = int) -> np.ndarray:
+        return np.array([
+            [conversion(c) for c in l] for l in self.lines
+        ])
+
     @reify
     def numpy_array(self) -> np.ndarray:
         return np.array(self.integer_matrix)
