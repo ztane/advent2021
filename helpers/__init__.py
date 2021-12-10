@@ -4,6 +4,7 @@ import dataclasses
 import inspect
 import operator as op
 import re
+import sys
 import typing
 from collections import *
 # noinspection PyUnresolvedReferences
@@ -28,6 +29,7 @@ from typing import Union, Dict
 
 from aocd import get_data, submit as _aocd_submit
 import numpy as np
+from statistics import median, mean
 
 
 class reify(object):
@@ -1230,3 +1232,26 @@ def make_translator(original: Iterable[str], target: Iterable[str]) \
         return s.translate(table)
 
     return translator
+
+
+missing = object()
+
+
+class better_list(list):
+    """
+    It's like a list, but better
+    """
+
+    def pop(self, index=-1, default=missing, /):
+        try:
+            return list.pop(self, index)
+        except IndexError:
+            if default is missing:
+                raise
+            return default
+
+    def find(self, value, start=0, stop=sys.maxsize, /):
+        try:
+            return list.index(self, start, stop)
+        except IndexError:
+            return -1

@@ -22,8 +22,9 @@ def part1_and_2(d: Input, ans: Answers) -> None:
 
     # use a minimum filter to replace all elements with the minima
     # in the neighbourhood. If this matches the original point then
-    # this is local minima in the neighbourhood. Remove background
-    # pixels from the map
+    # this is local minimum in the neighbourhood, and results in true.
+    # Solid areas of 9 will also result in trues in the middle -
+    # we need to remove them
     local_minima = (minimum_filter(
         the_map, footprint=neighbourhood, mode='constant', cval=9
     ) == the_map) & (the_map != 9)
@@ -31,7 +32,8 @@ def part1_and_2(d: Input, ans: Answers) -> None:
     # just calculate
     ans.part1 = np.sum(the_map[local_minima] + 1)
 
-    # label the connected areas of any pixels < 9
+    # label the connected areas of any pixels < 9. Conveniently
+    # the default neighbourhood for label is the one we want.
     features, _ = label(the_map < 9)
 
     # count the pixels thus created. Note that np.nditer yields
