@@ -23,29 +23,29 @@ test_case(2, test_data, 195)
 def part1_and_2(d: Input, ans: Answers) -> None:
     image = d.digit_array_to_ndarray()
     total = 0
-    zero_mask = numpy.zeros(image.shape, dtype='bool')
-    n_pixels = prod(image.shape)
+    n_pixels = image.size
 
     for iteration in count(1):
         image += 1
-        old_flashes = zero_mask.copy()
+
+        flashes_in_iteration = numpy.zeros_like(image, dtype='bool')
         while True:
-            new_flashes = (image > 9) ^ old_flashes
+            new_flashes = (image > 9) ^ flashes_in_iteration
             for y, x in np.transpose(np.where(new_flashes)):
                 clamping_slicer(image)[y - 1:y + 2, x - 1:x + 2] += 1
 
             if np.sum(new_flashes) == 0:
-                n_flashes = np.sum(old_flashes)
+                n_flashes = np.sum(flashes_in_iteration)
 
                 if n_flashes == n_pixels:
                     ans.part2 = iteration
                     return
 
                 total += n_flashes
-                image[old_flashes] = 0
+                image[flashes_in_iteration] = 0
                 break
 
-            old_flashes |= new_flashes
+            flashes_in_iteration |= new_flashes
 
         if iteration == 100:
             ans.part1 = total
