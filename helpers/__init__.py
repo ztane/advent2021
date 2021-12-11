@@ -123,7 +123,7 @@ class Input(str):
         """
         return [[int(i) for i in line.split()] for line in self.lines]
 
-    def numpy_char_array(self, conversion: Callable[[str], int] = int) -> np.ndarray:
+    def digit_array_to_ndarray(self, conversion: Callable[[str], int] = int) -> np.ndarray:
         return np.array([
             [conversion(c) for c in l] for l in self.lines
         ])
@@ -1255,3 +1255,35 @@ class better_list(list):
             return list.index(self, start, stop)
         except IndexError:
             return -1
+
+
+class clamping_slicer:
+    def __init__(self, array: np.ndarray):
+        self._array = array
+
+    def _calculate_slice(self, item):
+        if not isinstance(item, tuple):
+            item = (item,)
+
+        result = []
+        for i, si in zip(item, self._array.shape):
+            if isinstance(i, slice):
+                if i.start < 0:
+                    i = slice(0, i.stop, i.step)
+                if i.stop < 0:
+                    i = slice(i.start, 0, i.step)
+            elif isinstance(i, int):
+                if i < 0 or i >= si:
+                    i = slice(si)
+
+            result.append(i)
+
+        return tuple(result)
+
+    def __getitem__(self, item):
+        selector = self._calculate_slice(item)
+        return self._array[selector]
+
+    def __setitem__(self, item, value):
+        selector = self._calculate_slice(item)
+        self._array[selector] = value

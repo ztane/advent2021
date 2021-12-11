@@ -15,7 +15,7 @@ test_case(2, test_data, 1134)
 
 
 def part1_and_2(d: Input, ans: Answers) -> None:
-    the_map = d.numpy_char_array()
+    the_map = d.digit_array_to_ndarray()
 
     # generate 1-connected rank 2 structure... i.e. 4-neighbourhood
     neighbourhood = generate_binary_structure(rank=2, connectivity=1)
