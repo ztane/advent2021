@@ -1,6 +1,6 @@
 from helpers import *
 
-test_data = Input("""
+test_data1 = Input("""
 start-A
 start-b
 A-c
@@ -44,13 +44,12 @@ pj-fs
 start-RW
 """)
 
-test_case(1, test_data, 10)
+test_case(1, test_data1, 10)
 test_case(1, test_data2, 19)
 test_case(1, test_data3, 226)
-test_case(2, test_data, 36)
-
-
-# test_case(2, test_data2, 103)
+test_case(2, test_data1, 36)
+test_case(2, test_data2, 103)
+test_case(2, test_data3, 3509)
 
 
 def part1_and_2(d: Input, ans: Answers) -> None:
