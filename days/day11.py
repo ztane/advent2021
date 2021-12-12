@@ -51,4 +51,4 @@ def part1_and_2(d: Input, ans: Answers) -> None:
             ans.part1 = total
 
 
-run([1, 2], day=11, year=2021, submit=True)
+run([1, 2], day=11, year=2021)
