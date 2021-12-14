@@ -80,6 +80,9 @@ class Input(str):
             for i in self.data.split(separator, maxsplit=maxsplit)
         ]
 
+    def paragraphs(self) -> typing.List['Input']:
+        return [Input(i) for i in re.split('\n\n+', self)]
+
     def split(self, separator: str = None, maxsplit=-1) -> typing.List['Input']:
         return [Input(i) for i in self.data.split(separator, maxsplit=maxsplit)]
 
@@ -827,10 +830,18 @@ class SparseMap(dict):
 
         return self[key]
 
-    def print(self) -> 'SparseMap':
+    def reset_size(self) -> 'SparseMap':
+        self.rows = max(i[1] + 1 for i in self)
+        self.columns = max(i[0] + 1 for i in self)
+        return self
+
+    def print(self, reset_size=True, mapping=lambda x: [x, ' '][x is None]) -> 'SparseMap':
+        if reset_size:
+            self.reset_size()
+
         for y in IterableInt(self.rows):
             for x in IterableInt(self.columns):
-                print(self[x, y], end='')
+                print(mapping(self.get((x, y))), end='')
             print()
 
         return self
