@@ -509,7 +509,7 @@ def a_star_solve(
         heuristic: Optional[Callable[[Any, Any], Number]] = None,
         is_target: Optional[Callable[[Any], bool]] = None,
         find_all: bool = False,
-        hashable: Callable[[Any], Hashable] = lambda n: n
+        hashable: Callable[[Any], Hashable] = lambda n: n,
 ):
     if max_distance is None:
         max_distance = 2 ** 32
@@ -792,7 +792,7 @@ class SparseMap(dict):
     rows: IterableInt
     columns: IterableInt
 
-    def __init__(self, the_map=(), *, default=None):
+    def __init__(self, the_map=(), *, default=None, converter=lambda x: x):
         super().__init__()
         if callable(default):
             self.generate = default
@@ -804,7 +804,7 @@ class SparseMap(dict):
         max_x = -1
         for y, row in enumerate(the_map):
             for x, cell in enumerate(row):
-                self[x, y] = cell
+                self[x, y] = converter(cell)
 
             max_x = max(x, max_x)
 
