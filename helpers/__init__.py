@@ -124,7 +124,7 @@ class Input(str):
 
         :return: that matrix
         """
-        return [[int(i) for i in line.split()] for line in self.lines]
+        return [[int(i) for i in line.extract_ints] for line in self.lines]
 
     def digit_array_to_ndarray(self, conversion: Callable[[str], int] = int) -> np.ndarray:
         return np.array([
