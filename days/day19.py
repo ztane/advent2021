@@ -1,5 +1,6 @@
 import dataclasses
 
+import numpy
 from scipy.spatial.distance import cdist
 
 from helpers import *
@@ -185,13 +186,17 @@ def part1_and_2(d: Input, ans: Answers) -> None:
             this_scanner = scanners[i]
             for j in rotations:
                 reoriented = j.dot(this_scanner.T).T
-                counts = Counter()
+
+                deltas = np.zeros((0, 3), dtype='int64')
                 for row in reoriented:
                     totals = all_beacons - row
-                    counts.update(map(tuple, totals))
+                    deltas = np.concatenate((deltas, totals))
 
-                if counts.most_common(1)[0][1] >= 12:
-                    translation = counts.most_common(1)[0][0]
+                vals, cts = np.unique(deltas, return_counts=True, axis=0)
+                idx = np.argmax(cts)
+
+                if cts[idx] >= 12:
+                    translation = vals[idx]
                     scanner_coordinates.append(translation)
                     reoriented += np.array(translation)
                     all_beacons = np.unique(np.concatenate((all_beacons, reoriented)), axis=0)
