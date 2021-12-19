@@ -147,21 +147,7 @@ test_case(1, test_data, 79)
 test_case(2, test_data, 3621)
 
 
-@dataclasses.dataclass
-class Scanner:
-    coords: np.ndarray
-
-
-def part1_and_2(d: Input, ans: Answers) -> None:
-    scanners: List[Scanner] = []
-    for scanner in d.paragraphs():
-        _, coords = scanner.split('\n', 1)
-        coords: Input
-        scanners.append(Scanner(coords.numpy_array))
-
-    full_coords = scanners[0].coords.copy()
-    orientations = np.array(list(product([-1, 1], repeat=3)))
-
+def unit_vector_rotations():
     i = np.array([1, 0, 0])
     j = np.array([0, 1, 0])
     k = np.array([0, 0, 1])
@@ -175,37 +161,51 @@ def part1_and_2(d: Input, ans: Answers) -> None:
 
             rotations.append(np.array([vec1, vec2, vec3]))
 
-    mapped = {0}
+    return rotations
 
-    translations = [(0, 0, 0)]
+
+def part1_and_2(d: Input, ans: Answers) -> None:
+    scanners: List[np.ndarray] = []
+    for scanner in d.paragraphs():
+        _, coords = scanner.split('\n', 1)
+        scanners.append(coords.numpy_array)
+
+    all_beacons = scanners.pop(0)
+
+    rotations = unit_vector_rotations()
+
+    mapped = set()
+    scanner_coordinates = [(0, 0, 0)]
+
     while len(mapped) < len(scanners):
-        for i in range(1, len(scanners)):
+        for i in range(len(scanners)):
             if i in mapped:
                 continue
 
             this_scanner = scanners[i]
             for j in rotations:
-                reoriented = j.dot(this_scanner.coords.T).T
+                reoriented = j.dot(this_scanner.T).T
                 counts = Counter()
                 for row in reoriented:
-                    totals = full_coords - row
+                    totals = all_beacons - row
                     counts.update(map(tuple, totals))
 
                 if counts.most_common(1)[0][1] >= 12:
                     translation = counts.most_common(1)[0][0]
-                    translations.append(translation)
+                    scanner_coordinates.append(translation)
                     reoriented += np.array(translation)
-                    full_coords = np.unique(np.concatenate((full_coords, reoriented)), axis=0)
+                    all_beacons = np.unique(np.concatenate((all_beacons, reoriented)), axis=0)
                     mapped.add(i)
+                    break
 
-    ans.part1 = full_coords.shape[0]
+    ans.part1 = all_beacons.shape[0]
 
     max_manhattan = 0
 
     def manhattan_distance(a, b):
         return np.abs(np.array(a) - np.array(b)).sum()
 
-    for a, b in combinations(translations, 2):
+    for a, b in combinations(scanner_coordinates, 2):
         max_manhattan = max(manhattan_distance(a, b), max_manhattan)
 
     ans.part2 = max_manhattan
