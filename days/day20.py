@@ -37,7 +37,7 @@ def part1_and_2(d: Input, ans: Answers) -> None:
             the_map,
             1,
             mode='constant',
-            constant_values=i & 1 * masks[0]
+            constant_values=i & masks[0]
         )
 
         the_map = ndimage.generic_filter(
@@ -45,7 +45,7 @@ def part1_and_2(d: Input, ans: Answers) -> None:
             binfunc,
             size=3,
             mode='constant',
-            cval=i & 1 * masks[0]
+            cval=i & masks[0]
         )
 
         if i == 1:
