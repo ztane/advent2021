@@ -86,6 +86,9 @@ class Input(str):
     def split(self, separator: str = None, maxsplit=-1) -> typing.List['Input']:
         return [Input(i) for i in self.data.split(separator, maxsplit=maxsplit)]
 
+    def replace(self, old, new, cnt=-1, /) -> 'Input':
+        return Input(str.replace(self, old, new, cnt))
+
     @reify
     def as_int(self) -> int:
         return int(self.data)
