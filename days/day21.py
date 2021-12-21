@@ -31,7 +31,7 @@ class UniverseState:
 
 def part1_and_2(d: Input, ans: Answers) -> None:
     start_pos = [0] * 2
-    uni_counts = [0] * 2
+    scores = [0] * 2
     rolls = 0
     _, start_pos[0], _, start_pos[1] = d.extract_ints
     dice_iterator = cycle(interval(1, 100))
@@ -50,15 +50,15 @@ def part1_and_2(d: Input, ans: Answers) -> None:
             move = dice()
             pos[i] += move
             pos[i] = (pos[i] - 1) % 10 + 1
-            uni_counts[i] += pos[i]
+            scores[i] += pos[i]
 
             if debug:
-                print(f'player {i+1} moves to {pos[i]} for {uni_counts[i]}')
-            if uni_counts[i] >= 1000:
+                print(f'player {i+1} moves to {pos[i]} for {scores[i]}')
+            if scores[i] >= 1000:
                 if debug:
-                    print('player', i + 1, 'wins with', uni_counts[i], 'points')
+                    print('player', i + 1, 'wins with', scores[i], 'points')
 
-                ans.part1 = uni_counts[not i] * rolls
+                ans.part1 = scores[not i] * rolls
                 won = True
                 break
 
