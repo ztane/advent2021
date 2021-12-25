@@ -961,12 +961,23 @@ def interval(
     """
     It is like range, but... inclusive.
     """
-    if b is None:
-        return range(a + 1)
     if c is None:
-        return range(a, b + 1)
+        c = 1
 
-    return range(a, b + 1, c)
+    if c > 0:
+        if b is None:
+            return range(a + 1)
+        if c is None:
+            return range(a, b + 1)
+
+        return range(a, b + 1, c)
+    else:
+        if b is None:
+            return range(a - 1)
+        if c is None:
+            return range(a, b - 1)
+
+        return range(a, b - 1, c)
 
 
 class fancyseqiter:
