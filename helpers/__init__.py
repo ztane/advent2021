@@ -1,3 +1,4 @@
+import copy
 import dataclasses
 
 # noinspection PyUnresolvedReferences
@@ -508,11 +509,12 @@ def a_star_solve(
         *,
         target: Optional[Any] = None,
         max_distance: Optional[Number] = None,
-        neighbours: Callable[[Any], Tuple[Number, Any]],
+        neighbours: Union[Callable[[Any], Iterable[Tuple[Number, Any]]], Callable[[Any], Iterable[Tuple[Number, Number, Any]]]],
         heuristic: Optional[Callable[[Any, Any], Number]] = None,
         is_target: Optional[Callable[[Any], bool]] = None,
         find_all: bool = False,
         hashable: Callable[[Any], Hashable] = lambda n: n,
+        integrated_heuristic: bool = False,
 ):
     if max_distance is None:
         max_distance = 2 ** 32
@@ -532,7 +534,6 @@ def a_star_solve(
     all_routes = []
     max_depth = 0
 
-    min_h = heuristic(origin, target) + 1
     while queue:
         hx, distance, node = heappop(queue)
         if is_target(node):
@@ -546,18 +547,25 @@ def a_star_solve(
         if distance > max_depth:
             max_depth = distance
 
-        for d_dist, node in neighbours(node):
-            if hashable(node) in visited:
-                continue
+        if not integrated_heuristic:
+            for d_dist, node in neighbours(node):
+                if hashable(node) in visited:
+                    continue
 
-            if distance + d_dist <= max_distance:
-                h = heuristic(node, target)
-                if h < min_h:
-                    min_h = h
-                heappush(queue, Node(h,
-                                     distance + d_dist, node))
+                if distance + d_dist <= max_distance:
+                    h = heuristic(node, target)
+                    heappush(queue, Node(h, distance + d_dist, node))
 
-                cnt += 1
+                    cnt += 1
+        else:
+            for h, d_dist, node in neighbours(node):
+                if hashable(node) in visited:
+                    continue
+
+                if distance + d_dist <= max_distance:
+                    heappush(queue, Node(h, distance + d_dist, node))
+
+                    cnt += 1
 
     if find_all:
         return all_routes
@@ -818,7 +826,8 @@ class SparseMap(dict):
         new_y = self.rows
         for x, cell in enumerate(row):
             self[x, new_y] = cell
-        self.rows += 1
+
+        self.rows = IterableInt(self.rows + 1)
 
     def is_inside(self, x, y) -> bool:
         return 0 <= x < self.columns and 0 <= y < self.rows
@@ -834,8 +843,8 @@ class SparseMap(dict):
         return self[key]
 
     def reset_size(self) -> 'SparseMap':
-        self.rows = max(i[1] + 1 for i in self)
-        self.columns = max(i[0] + 1 for i in self)
+        self.rows = IterableInt(max(i[1] + 1 for i in self))
+        self.columns = IterableInt(max(i[0] + 1 for i in self))
         return self
 
     def print(self, reset_size=True, mapping=lambda x: [x, ' '][x is None]) -> 'SparseMap':
